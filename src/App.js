@@ -9,7 +9,6 @@ import Register from './components/Register/Register';
 
 function App() {
   const location = useLocation()
-  console.log(location.pathname !== '/')
   return (
     <div className="App">
       {

@@ -10,8 +10,6 @@ const Products = () => {
             .then(data => setProducts(data))
     }, [])
 
-    console.log(products)
-
     return (
         <div className='flex justify-center'>
             <section className='my-10'>
