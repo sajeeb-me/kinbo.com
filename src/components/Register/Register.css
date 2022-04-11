@@ -1,0 +1,23 @@
+.form-container {
+    border: 1px solid var(--clr-neon);
+}
+
+.form input {
+    background: transparent;
+    border-bottom: 1px solid var(--clr-neon);
+    width: 400px;
+    outline: none;
+    padding-left: 5px;
+}
+
+.form .register {
+    border: 1px solid;
+    width: 180px;
+    cursor: pointer;
+    transition: 0.5s all;
+}
+
+.form .register:hover {
+    background: var(--clr-neon);
+    color: var(--clr-bg);
+}
