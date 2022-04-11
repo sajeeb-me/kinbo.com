@@ -20,7 +20,7 @@ const Header = () => {
                 <CustomLink to='/cart'>Cart</CustomLink>
                 {
                     user ?
-                        <button onClick={handleLogout} style={{ color: '#14f7ff' }}>Logout ({user?.displayName})</button>
+                        <button onClick={handleLogout} style={{ color: '#14f7ff' }}>Logout</button>
                         :
                         <CustomLink to='/login'>Login</CustomLink>
                 }

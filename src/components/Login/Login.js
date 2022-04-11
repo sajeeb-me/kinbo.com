@@ -1,7 +1,7 @@
 import { KeyIcon, MailIcon } from '@heroicons/react/outline';
 import React, { useState } from 'react';
-import { useAuthState, useSignInWithEmailAndPassword, useSignInWithFacebook, useSignInWithGoogle, useSignInWithTwitter } from 'react-firebase-hooks/auth';
-import { Link, useNavigate } from 'react-router-dom';
+import { useAuthState, useSendPasswordResetEmail, useSignInWithEmailAndPassword, useSignInWithFacebook, useSignInWithGoogle, useSignInWithTwitter } from 'react-firebase-hooks/auth';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../firebase.init';
 import GoogleIcon from '../../icons/google.png'
 import FacebookIcon from '../../icons/facebook.png'
@@ -10,7 +10,9 @@ import TwitterIcon from '../../icons/twitter.png'
 const Login = () => {
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/products'
 
     const getEmail = e => {
         setEmail(e.target.value)
@@ -19,8 +21,9 @@ const Login = () => {
         setPass(e.target.value)
     }
 
-    const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
-    const [user, loading, error] = useAuthState(auth);
+    const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
+    const [sendPasswordResetEmail] = useSendPasswordResetEmail(auth);
+    const [existUser] = useAuthState(auth);
     const [signInWithGoogle] = useSignInWithGoogle(auth);
     const [signInWithFacebook] = useSignInWithFacebook(auth);
     const [signInWithTwitter] = useSignInWithTwitter(auth);
@@ -30,8 +33,8 @@ const Login = () => {
         signInWithEmailAndPassword(email, pass)
     }
 
-    if (user) {
-        navigate('/')
+    if (existUser) {
+        navigate(from, { replace: true });
     }
 
     return (
@@ -50,8 +53,10 @@ const Login = () => {
                         </div>
                         <input className='register py-3 rounded-lg' type="submit" value="Login" />
                     </form>
-                    <p>{error?.message}</p>
-                    <p className='my-2'><small><span className='text-white'>Don't have account?</span> <Link to='/register'>Register</Link></small></p>
+                    <button onClick={() => sendPasswordResetEmail(email)} className='mt-2 opacity-30'>Forget password?</button>
+                    <p className='text-red-500'><small>{error?.message}</small></p>
+                    <p>{loading && 'loading...'}</p>
+                    <p><small><span className='text-white'>Don't have account?</span> <Link to='/register'>Register</Link></small></p>
                     <div className='mt-5'>
                         <button onClick={() => signInWithGoogle()}><img className='h-8 w-8' src={GoogleIcon} alt="" /></button>
                         <button onClick={() => signInWithFacebook()}><img className='h-9 w-9 mx-8' src={FacebookIcon} alt="" /></button>

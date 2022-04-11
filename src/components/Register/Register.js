@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import './Register.css'
 import { MailIcon, UserCircleIcon, KeyIcon } from '@heroicons/react/outline'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import GoogleIcon from '../../icons/google.png'
 import FacebookIcon from '../../icons/facebook.png'
 import TwitterIcon from '../../icons/twitter.png'
-import { useCreateUserWithEmailAndPassword, useSignInWithFacebook, useSignInWithGoogle, useSignInWithTwitter } from 'react-firebase-hooks/auth';
+import { useCreateUserWithEmailAndPassword, useSendEmailVerification, useSignInWithFacebook, useSignInWithGoogle, useSignInWithTwitter } from 'react-firebase-hooks/auth';
 import auth from '../../firebase.init';
 
 const Register = () => {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
+
+    const navigate = useNavigate();
 
     const getName = e => {
         setName(e.target.value)
@@ -23,7 +25,8 @@ const Register = () => {
         setPass(e.target.value)
     }
 
-    const [createUserWithEmailAndPassword, user, error] = useCreateUserWithEmailAndPassword(auth);
+    const [createUserWithEmailAndPassword, user, loading, error] = useCreateUserWithEmailAndPassword(auth);
+    const [sendEmailVerification] = useSendEmailVerification(auth);
     const [signInWithGoogle] = useSignInWithGoogle(auth);
     const [signInWithFacebook] = useSignInWithFacebook(auth);
     const [signInWithTwitter] = useSignInWithTwitter(auth);
@@ -31,6 +34,13 @@ const Register = () => {
     const handleSubmit = e => {
         e.preventDefault()
         createUserWithEmailAndPassword(email, pass)
+            .then(result => {
+                sendEmailVerification()
+            })
+    }
+
+    if (user) {
+        navigate('/products')
     }
 
     return (
@@ -53,7 +63,8 @@ const Register = () => {
                         </div>
                         <input className='register py-3 rounded-lg' type="submit" value="Register" />
                     </form>
-                    <p>{error?.message}</p>
+                    <p className='mt-3 text-red-500'><small>{error?.message}</small></p>
+                    <p>{loading && 'loading...'}</p>
                     <p className='my-2'><small><span className='text-white'>Already have account?</span> <Link to='/login'>Login</Link></small></p>
                     <div className='mt-5'>
                         <button onClick={() => signInWithGoogle()}><img className='h-8 w-8' src={GoogleIcon} alt="" /></button>
